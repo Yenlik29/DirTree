@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	// "io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	// "strings"
@@ -47,9 +47,43 @@ func expandedTree(path string) {
 	return
 }
 
+func building(FullPath Path) {
+	files, err := ioutil.ReadDir(FullPath.Path)
+	if err != nil {
+		fmt.Println("[Building]: Error")
+		return
+	}
+	for _, file := range files {
+		dir, _ := os.Open(file.Name())
+		if err != nil {
+			fmt.Println("[Open]: Error")
+			return
+		}
+		di, _ := dir.Stat()
+		if di.IsDir() {
+			fmt.Println("├───", file.Name())
+		} else {
+			fmt.Println("    ├───", file.Name())
+		}
+		// fmt.Println(file.Name())
+	}
+}
+
 func simpleTree(path string) {
 	FullPath := Path{Path : path}
-	fmt.Println(FullPath)
+	dir, err := os.Open(FullPath.Path)
+	if err != nil {
+		fmt.Println("[Open]: Error")
+		return
+	}
+	di, _ := dir.Stat()
+	if di.IsDir() {
+		fmt.Println("Cool, it's directory")
+		building(FullPath)
+	} else {
+		fmt.Println("[Warning]: It's a file")
+		return
+	}
 	return
 }
 
