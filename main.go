@@ -5,12 +5,12 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	// "strings"
+	"strings"
 )
 
 type Path struct {
-	Path string
-	Mem  int
+	Path  string
+	Mem   int
 	Files []string
 }
 
@@ -50,27 +50,18 @@ func expandedTree(path string) {
 func building(FullPath Path) {
 	files, err := ioutil.ReadDir(FullPath.Path)
 	if err != nil {
-		fmt.Println("[Building]: Error")
+		fmt.Println("[ReadDir]: Error")
 		return
 	}
 	for _, file := range files {
-		dir, _ := os.Open(file.Name())
-		if err != nil {
-			fmt.Println("[Open]: Error")
-			return
+		if !strings.Contains(file.Name(), ".") {
+			fmt.Println("└───", file.Name())
 		}
-		di, _ := dir.Stat()
-		if di.IsDir() {
-			fmt.Println("├───", file.Name())
-		} else {
-			fmt.Println("    ├───", file.Name())
-		}
-		// fmt.Println(file.Name())
 	}
 }
 
 func simpleTree(path string) {
-	FullPath := Path{Path : path}
+	FullPath := Path{Path: path}
 	dir, err := os.Open(FullPath.Path)
 	if err != nil {
 		fmt.Println("[Open]: Error")
@@ -109,8 +100,6 @@ func dirTree(path string, printFiles int) (string, error) {
 }
 
 func main() {
-	// out := os.Stdout
-
 	if len(os.Args) != 2 && len(os.Args) != 3 {
 		fmt.Println("Usage: add/remove args")
 		return
